@@ -1,0 +1,57 @@
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js")
+const PlayerCharacter = require("../../models/playercharacter.js")
+const XRegExp = require("xregexp")
+
+
+async function savecharacter(name, basehp, initiative, initiativeAdvantage, owner) {
+    initiativeAdvantage = initiativeAdvantage == "s" ? true : false
+    const newchar = new PlayerCharacter({
+        name,
+        basehp,
+        initiative,
+        initiativeAdvantage,
+        owner
+    })
+    await newchar.save()
+}
+
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName("novopersonagem")
+        .setDescription("Cria um novo personagem associado à sua conta"),
+    async execute(interaction) {
+        //Mostra o menu
+        const modal = new ModalBuilder().setCustomId(`pcmodal${interaction.user.id}`).setTitle("Novo personagem")
+        const nameInput = new TextInputBuilder().setCustomId("name").setLabel("Nome do personagem").setStyle(TextInputStyle.Short)
+            .setPlaceholder("Sem acentos, por favor!").setMaxLength(20)
+        const basehpInput = new TextInputBuilder().setCustomId("basehp").setLabel("Vida base do personagem").setStyle(TextInputStyle.Short)
+        const initiativeInput = new TextInputBuilder().setCustomId("initiative").setLabel("Bônus de iniciativa do personagem")
+            .setStyle(TextInputStyle.Short)
+        const initiaveAdvantageInput = new TextInputBuilder().setCustomId("initiativeadvantage").setLabel("Possui vantagem na iniciativa?")
+            .setStyle(TextInputStyle.Short).setPlaceholder("S ou N").setMaxLength(1)
+        const firstactionrow = new ActionRowBuilder().addComponents(nameInput)
+        const secondactionrow = new ActionRowBuilder().addComponents(basehpInput)
+        const thirdactionrow = new ActionRowBuilder().addComponents(initiativeInput)
+        const fourthactionrow = new ActionRowBuilder().addComponents(initiaveAdvantageInput)
+        modal.addComponents(firstactionrow, secondactionrow, thirdactionrow, fourthactionrow)
+        await interaction.showModal(modal)
+        //Lida com o input
+        const filter = (interaction) => interaction.customId === `pcmodal${interaction.user.id}`
+        const modalresponse = await interaction.awaitModalSubmit({ filter, time: 9000_00 })
+        console.log(`${modalresponse.customId} was submitted`)
+        await modalresponse.reply("Processando...")
+        const name = modalresponse.fields.getTextInputValue("name")
+        const basehp = Number(modalresponse.fields.getTextInputValue("basehp"))
+        const initiative = Number(modalresponse.fields.getTextInputValue("initiative"))
+        const initiativeadvantage = modalresponse.fields.getTextInputValue("initiativeadvantage")
+        const nameregex = XRegExp("^[\\pL][\\pL ]*$", 'u')
+        if (XRegExp.exec(name, nameregex) === null || isNaN(basehp) || isNaN(initiative) || initiativeadvantage.match(/[sn]/i) === null) {
+            console.log("Não foi\n");
+            await modalresponse.editReply("```elm\nErro de formatação! Verifique suas entradas\n```")
+            return
+        }
+        console.log(`Foi!\nNome:${name}\nHP:${basehp}\nIniciativa:${initiative}\nVantagem:${initiativeadvantage}\n`)
+        await savecharacter(name, basehp, initiative, initiativeadvantage, modalresponse.user.id)
+        modalresponse.editReply("```ini\n[Personagem criado: " + name + "]\n```")
+    }
+}

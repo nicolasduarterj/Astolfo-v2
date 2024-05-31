@@ -1,0 +1,21 @@
+{
+  "name": "astolfov2",
+  "version": "1.0.0",
+  "description": "Discord bot for D&D",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nicolas Duarte",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^14.15.2",
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.4.0",
+    "nodemon": "^3.1.2",
+    "xregexp": "^5.1.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.3.0"
+  }
+}
