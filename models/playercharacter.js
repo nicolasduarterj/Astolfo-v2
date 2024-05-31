@@ -6,7 +6,7 @@ const playerCharacterSchema = mongoose.Schema({
     initiative: Number,
     initiativeAdvantage: Boolean,
     owner: String,
-    parties: [{type: String}]
+    party : String
 })
 
 const PlayerCharacter = mongoose.model('PlayerCharacter', playerCharacterSchema)

@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js")
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, SelectMenuOptionBuilder } = require("discord.js")
 const PlayerCharacter = require("../../models/playercharacter.js")
 const XRegExp = require("xregexp")
 
@@ -10,7 +10,8 @@ async function savecharacter(name, basehp, initiative, initiativeAdvantage, owne
         basehp,
         initiative,
         initiativeAdvantage,
-        owner
+        owner,
+        party: ""
     })
     await newchar.save()
 }
@@ -51,6 +52,11 @@ module.exports = {
             return
         }
         console.log(`Foi!\nNome:${name}\nHP:${basehp}\nIniciativa:${initiative}\nVantagem:${initiativeadvantage}\n`)
+        const found = await PlayerCharacter.find({name, owner:modalresponse.user.id})
+        if (found) {
+            modalresponse.editReply("```diff\nJá existe um personagem seu com esse nome```")
+            return
+        }
         await savecharacter(name, basehp, initiative, initiativeadvantage, modalresponse.user.id)
         modalresponse.editReply("```ini\n[Personagem criado: " + name + "]\n```")
     }
