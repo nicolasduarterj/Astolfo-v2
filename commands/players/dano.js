@@ -16,37 +16,32 @@ module.exports = {
     async autocomplete(interaction) {
         const focusedValue = interaction.options.getFocused()
         const playerchars = await PlayerCharacter.find({owner: interaction.user.id})
-        const populatedparty = await Party.findOne({dm:interaction.user.id}).populate("members", {name: 1, _id: 1})
-        const filteredpartymembers = populatedparty?.members.filter(char => char.name.startsWith(focusedValue))
-            .map(char => ({name: `${char.name} (party)`, value:`${char.name}(p)`}))
-        console.log(filteredpartymembers)
-        const filteredchars = playerchars.map(char => char.name).filter(char => char.startsWith(focusedValue))
+        const filteredplayerchars = playerchars.filter(char => char.name.startsWith(focusedValue))
+        const party = await Party.findOne({dm:interaction.user.id})
         let result = []
-        if (filteredpartymembers != undefined){
-            result = filteredpartymembers
+        if (party != null) {
+            const members = await Promise.all(party.members.map(id => PlayerCharacter.findById(id)))
+            result = members.filter(char => char.name.startsWith(focusedValue))
+                .map(char => ({name:`${char.name} (membro da sua party)`, value:char.name}))
         }
-        await interaction.respond(result.concat(filteredchars.map(char => ({name: char, value: char}))))
+        result = result.concat(filteredplayerchars.map(char => ({name:char.name, value:char.name})))
+        await interaction.respond(result)
     },
     async execute(interaction) {
         await interaction.reply("Processando...")
         let name = interaction.options.getString("char")
         const dano = interaction.options.getNumber("pontos")
         let char
-        if (name.endsWith("(p)")) {
-            name = name.slice(0, -3)
-            const party = await Party.findOne({dm:interaction.user.id}).populate("members", {name: 1, _id: 1})
-            const charmeta = party?.members.find(char => char.name == name)
-            if (charmeta == undefined) {
-                await interaction.editReply("```diff\n-Não consegui achar esse personagem\n```")
-                return
-            }
-            char = await PlayerCharacter.findById(charmeta._id)
+        const playerchar = await PlayerCharacter.findOne({owner:interaction.user.id, name})
+        const party = await Party.findOne({dm:interaction.user.id})
+        if (party !== null) {
+            const members = await Promise.all(party.members.map(id => PlayerCharacter.findById(id)))
+            const partychar = members.find(char => (char.name == name)) 
+            char = partychar === undefined ? playerchar : partychar
         }
-        else 
-            char = await PlayerCharacter.findOne({owner:interaction.user.id, name})
-        if (char == null) {
-                await interaction.editReply("```diff\n-Não consegui achar esse personagem\n```")
-                return
+        if (char === null) {
+            await interaction.editReply("```diff\n-Não consegui achar esse personagem\n```")
+            return
         }
         char.hp = char.hp < dano ? 0 : char.hp - dano
         await char.save()
