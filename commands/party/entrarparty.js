@@ -26,36 +26,33 @@ module.exports = {
         const name = interaction.options.getString("char")
         const dm = interaction.options.getUser("dm")
         const pass = interaction.options.getString("senha")
-        const charexists = await PlayerCharacter.exists({name, owner:interaction.user.id})
-        if (!charexists) {
-            await interaction.editReply("```diff-Não consegui achar esse personagem.\n```")
+        const chararr = await PlayerCharacter.find({name, owner:interaction.user.id})
+        const char = chararr[0]
+        const partyarr = await Party.find({dm:dm.id})
+        const party = partyarr[0]
+        if (char == undefined) {
+            await interaction.editReply("```diff\n-Não consegui achar esse personagem.\n```")
             return
         }
-       const partyexists = await Party.exists({dm:dm.id}) 
-       if (!partyexists) {
+        if (party == undefined) {
             await interaction.editReply("```diff\n-Esse usuário não é mestre de uma party.\n```")
             return
-       }
-       const chararr = await PlayerCharacter.find({name, owner:interaction.user.id})
-       const char = chararr[0]
-       if (char.party) {
+        }
+        if (char.party) {
             await interaction.editReply("```diff\n-Esse Personagem já está em uma party.\n```")
             return
-       }
-       const partyarr = await Party.find({dm:dm.id})
-       const party = partyarr[0]
-       console.log(party.pass)
-       const matches = await bcrypt.compare(pass, party.pass)
-       if (!matches) {
-            console.log(`Senha da party ${party.pass}\nSua Senha: ${passHash}\n${party}`)
-            await interaction.editReply("```diff-Erro! Verifique sua senha\n```")
+        }
+        console.log(party.pass)
+        const matches = await bcrypt.compare(pass, party.pass)
+        if (!matches) {
+            await interaction.editReply("```diff\n-Erro! Verifique sua senha.\n```")
             return
-       }
-       party.members = party.members.concat(char._id)
-       await party.save()
-       char.party = party._id
-       await char.save()
-       interaction.editReply("```ini\n[" + name + " foi adicionado à party!\n```")
+        }
+        party.members = party.members.concat(char._id)
+        await party.save()
+        char.party = party._id
+        await char.save()
+        interaction.editReply("```ini\n[" + name + " foi adicionado à party!\n```")
     },
     async autocomplete(interaction) {
         const focusedValue = interaction.options.getFocused()
