@@ -12,9 +12,8 @@ module.exports = {
             return
         }
         let response = "```elm\n"
-        for (member of party.members) {
+        for (member of party.members)
             response += `${member.name}: ${member.hp}\n`
-        }
         response += "```"
         await interaction.editReply(response)
     } 
