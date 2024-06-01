@@ -11,7 +11,7 @@ module.exports = {
             return
         }
         let response = "```elm\n"
-        for (char of chars) {
+        for (const char of chars) {
             response += `${char.name}: ${char.hp}\n`
         }
         response += "```"

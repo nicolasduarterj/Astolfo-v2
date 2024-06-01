@@ -17,6 +17,8 @@
     "xregexp": "^5.1.1"
   },
   "devDependencies": {
-    "eslint": "^9.3.0"
+    "@eslint/js": "^9.4.0",
+    "eslint": "^9.4.0",
+    "globals": "^15.3.0"
   }
 }

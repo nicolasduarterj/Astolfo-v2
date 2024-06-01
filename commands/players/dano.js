@@ -1,7 +1,6 @@
 const { SlashCommandBuilder } = require("discord.js");
 const PlayerCharacter = require("../../models/playercharacter.js");
 const Party = require("../../models/party");
-const { default: mongoose } = require("mongoose");
 
 module.exports = {
     data: new SlashCommandBuilder()

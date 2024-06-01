@@ -1,7 +1,6 @@
-const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, SelectMenuOptionBuilder } = require("discord.js")
+const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder } = require("discord.js")
 const PlayerCharacter = require("../../models/playercharacter.js")
 const XRegExp = require("xregexp")
-const mongoose = require("mongoose")
 
 async function savecharacter(name, basehp, initiative, initiativeAdvantage, owner) {
     initiativeAdvantage = initiativeAdvantage.toLowerCase() == 's' ? true : false

@@ -16,7 +16,7 @@ async function roladado(syntax) {
     if (isNaN(bonus))
         bonus = 0
     const resultarr = []
-    for (i = 0; i < numberofdice; i++)
+    for (let i = 0; i < numberofdice; i++)
         resultarr[i] = Math.floor(Math.random() * typeofdice) + 1
     resultarr[numberofdice] = resultarr.reduce((acc, num) => acc + num) + bonus
     return resultarr
@@ -40,7 +40,7 @@ module.exports = {
             return
         }
         let syntax = "```ini\nRolagem de " + interaction.user.username + "\n\nDados: ["
-        for (i = 0; i < resultarr.length - 1; i++) {
+        for (let i = 0; i < resultarr.length - 1; i++) {
             syntax = syntax + resultarr[i]
             if (i != resultarr.length - 2)
                 syntax += " "
