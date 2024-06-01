@@ -3,7 +3,7 @@ const PlayerCharacter = require("../../models/playercharacter.js")
 const XRegExp = require("xregexp")
 
 async function savecharacter(name, basehp, initiative, initiativeAdvantage, owner) {
-    initiativeAdvantage = initiativeAdvantage.toLowerCase() == 's' ? true : false
+    initiativeAdvantage = initiativeAdvantage.toLowerCase() == 's'
     const newchar = new PlayerCharacter({
         name,
         basehp,
