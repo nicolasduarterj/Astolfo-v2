@@ -25,8 +25,10 @@ module.exports = {
             }
             const party = await Party.findById(playerchar.party).populate("members")
             await PlayerCharacter.findOneAndUpdate({name, owner:interaction.user.id}, {$unset: {party:""}})
-            if (party == undefined) 
+            if (party == undefined) {
+                await interaction.editReply("```diff\n-Esse personagem não está em uma party\n```")
                 return
+            }
             party.members = party.members.filter(member => (member.name != name || member.owner != interaction.user.id))
             await party.save()
             await interaction.editReply("```elm\n" + name + " foi removido da party.\n```")

@@ -12,7 +12,7 @@ module.exports = {
             return
         }
         let members = await Promise.all(party.members.map(id => PlayerCharacter.findById(id)))
-        let response = "```elm\n"
+        let response = "```elm\nIniciativa:\n\n"
         for (const member of members) {
             let roll = Math.floor(Math.random() * 20) + 1
             if (member.initiativeAdvantage == true) {
