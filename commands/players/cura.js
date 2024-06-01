@@ -1,17 +1,17 @@
 const { SlashCommandBuilder } = require("discord.js");
 const PlayerCharacter = require("../../models/playercharacter.js");
-const Party = require("../../models/party");
+const Party = require("../../models/party.js");
 const { default: mongoose } = require("mongoose");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("dano")
-        .setDescription("[SELECIONE DO AUTOCOMPLETE] Causa dano a um personagem seu ou da sua party")
+        .setName("cura")
+        .setDescription("[SELECIONE DO AUTOCOMPLETE] Cura um personagem seu ou da sua party")
         .addStringOption(option =>
-            option.setName("char").setDescription("Personagem a qual causar dano")
+            option.setName("char").setDescription("Personagem a curar")
                 .setAutocomplete(true).setRequired(true))
         .addNumberOption(option =>
-            option.setName("pontos").setDescription("Pontos de dano a causar")
+            option.setName("pontos").setDescription("Pontos de cura")
                 .setRequired(true).setMinValue(1)),
     async autocomplete(interaction) {
         const focusedValue = interaction.options.getFocused()
@@ -48,8 +48,8 @@ module.exports = {
                 await interaction.editReply("```diff\n-Não consegui achar esse personagem\n```")
                 return
         }
-        char.hp = char.hp < dano ? 0 : char.hp - dano
+        char.hp = (char.hp + dano) > char.basehp ? char.basehp : char.hp + dano
         await char.save()
-        await interaction.editReply("```elm\n" + name + " sofreu " + dano + " de dano\n```")
+        await interaction.editReply("```elm\n" + name + " curou " + dano + " de vida\n```")
     }
 }
