@@ -6,7 +6,7 @@ const { default: mongoose } = require("mongoose");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("cura")
-        .setDescription("[SELECIONE DO AUTOCOMPLETE] Cura um personagem seu ou da sua party")
+        .setDescription("Cura um personagem seu ou da sua party")
         .addStringOption(option =>
             option.setName("char").setDescription("Personagem a curar")
                 .setAutocomplete(true).setRequired(true))
