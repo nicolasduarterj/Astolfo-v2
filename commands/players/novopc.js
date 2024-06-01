@@ -48,7 +48,8 @@ module.exports = {
         const initiative = Number(modalresponse.fields.getTextInputValue("initiative"))
         const initiativeadvantage = modalresponse.fields.getTextInputValue("initiativeadvantage")
         const nameregex = XRegExp("^[\\pL][\\pL -]*$", 'u')
-        if (XRegExp.exec(name, nameregex) === null || isNaN(basehp) || isNaN(initiative) || initiativeadvantage.match(/[sn]/i) === null) {
+        if (XRegExp.exec(name, nameregex) === null || isNaN(basehp) || isNaN(initiative) || initiativeadvantage.match(/[sn]/i) === null
+            || basehp < 1) {
             console.log("Não foi\n");
             await modalresponse.editReply("```elm\nErro de formatação! Verifique suas entradas\n```")
             return
