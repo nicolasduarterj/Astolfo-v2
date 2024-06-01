@@ -1,17 +1,17 @@
 const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, SelectMenuOptionBuilder } = require("discord.js")
 const PlayerCharacter = require("../../models/playercharacter.js")
 const XRegExp = require("xregexp")
-
+const mongoose = require("mongoose")
 
 async function savecharacter(name, basehp, initiative, initiativeAdvantage, owner) {
-    initiativeAdvantage = initiativeAdvantage == "s" ? true : false
+    initiativeAdvantage = initiativeAdvantage.toLowerCase() == 's' ? true : false
     const newchar = new PlayerCharacter({
         name,
         basehp,
+        hp: basehp,
         initiative,
         initiativeAdvantage,
         owner,
-        party: ""
     })
     await newchar.save()
 }
@@ -21,6 +21,7 @@ module.exports = {
         .setName("novopersonagem")
         .setDescription("Cria um novo personagem associado à sua conta"),
     async execute(interaction) {
+
         //Mostra o menu
         const modal = new ModalBuilder().setCustomId(`pcmodal${interaction.user.id}`).setTitle("Novo personagem")
         const nameInput = new TextInputBuilder().setCustomId("name").setLabel("Nome do personagem").setStyle(TextInputStyle.Short)
@@ -36,6 +37,7 @@ module.exports = {
         const fourthactionrow = new ActionRowBuilder().addComponents(initiaveAdvantageInput)
         modal.addComponents(firstactionrow, secondactionrow, thirdactionrow, fourthactionrow)
         await interaction.showModal(modal)
+
         //Lida com o input
         const filter = (interaction) => interaction.customId === `pcmodal${interaction.user.id}`
         const modalresponse = await interaction.awaitModalSubmit({ filter, time: 9000_00 })
@@ -52,7 +54,7 @@ module.exports = {
             return
         }
         console.log(`Foi!\nNome:${name}\nHP:${basehp}\nIniciativa:${initiative}\nVantagem:${initiativeadvantage}\n`)
-        const found = await PlayerCharacter.find({name, owner:modalresponse.user.id})
+        const found = await PlayerCharacter.exists({name, owner:modalresponse.user.id})
         if (found) {
             modalresponse.editReply("```diff\nJá existe um personagem seu com esse nome```")
             return

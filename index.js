@@ -56,7 +56,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await interaction.followUp({ content: "Algo deu errado ao executar esse comando. Peço perdão.", ephemeral: true})
         else
             await interaction.reply({ content: "Algo deu errado ao executar esse comando. Peço perdão.", ephemeral: true })        
-    }
+    } 
+})
+
+client.on(Events.InteractionCreate, async (interaction) => {
+    if (!interaction.isAutocomplete()) return
+    const command = interaction.client.commands.get(interaction.commandName)
+    if (!command) return
+    await command.autocomplete(interaction)
 })
 
 client.login(process.env.TOKEN)

@@ -2,10 +2,10 @@ const mongoose = require("mongoose")
 
 const partySchema = new mongoose.Schema({
     dm: String,
-    members: [],
+    members: [{type: mongoose.Schema.Types.ObjectId, ref: "PlayerCharacter"}],
     pass: String
 })
 
-const Party = mongoose.model("party", partySchema)
+const Party = mongoose.model("Party", partySchema)
 
 module.exports = Party
