@@ -7,11 +7,18 @@ module.exports = {
         .setName("cura")
         .setDescription("Cura um personagem seu ou da sua party")
         .addStringOption(option =>
-            option.setName("char").setDescription("Personagem a curar")
-                .setAutocomplete(true).setRequired(true))
+            option
+                .setName("char")
+                .setDescription("Personagem a curar")
+                .setAutocomplete(true)
+                .setRequired(true))
         .addNumberOption(option =>
-            option.setName("pontos").setDescription("Pontos de cura")
-                .setRequired(true).setMinValue(1)),
+            option
+                .setName("pontos")
+                .setDescription("Pontos de cura")
+                .setRequired(true)
+                .setMinValue(1)),
+
     async autocomplete(interaction) {
         const focusedValue = interaction.options.getFocused()
         const playerchars = await PlayerCharacter.find({owner: interaction.user.id})
@@ -26,6 +33,7 @@ module.exports = {
         result = result.concat(filteredplayerchars.map(char => ({name:char.name, value:char.name})))
         await interaction.respond(result)
     },
+
     async execute(interaction) {
         await interaction.reply("Processando...")
         let name = interaction.options.getString("char")

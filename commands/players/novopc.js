@@ -2,23 +2,11 @@ const { SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, Act
 const PlayerCharacter = require("../../models/playercharacter.js")
 const XRegExp = require("xregexp")
 
-async function savecharacter(name, basehp, initiative, initiativeAdvantage, owner) {
-    initiativeAdvantage = initiativeAdvantage.toLowerCase() == 's'
-    const newchar = new PlayerCharacter({
-        name,
-        basehp,
-        hp: basehp,
-        initiative,
-        initiativeAdvantage,
-        owner,
-    })
-    await newchar.save()
-}
-
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("novopersonagem")
         .setDescription("Cria um novo personagem associado à sua conta"),
+
     async execute(interaction) {
 
         //Mostra o menu
@@ -45,7 +33,7 @@ module.exports = {
         const name = modalresponse.fields.getTextInputValue("name")
         const basehp = Number(modalresponse.fields.getTextInputValue("basehp"))
         const initiative = Number(modalresponse.fields.getTextInputValue("initiative"))
-        const initiativeadvantage = modalresponse.fields.getTextInputValue("initiativeadvantage")
+        let initiativeadvantage = modalresponse.fields.getTextInputValue("initiativeadvantage")
         const nameregex = XRegExp("^[\\pL][\\pL -]*$", 'u')
         if (XRegExp.exec(name, nameregex) === null || isNaN(basehp) || isNaN(initiative) || initiativeadvantage.match(/[sn]/i) === null
             || basehp < 1) {
@@ -59,7 +47,16 @@ module.exports = {
             modalresponse.editReply("```diff\nJá existe um personagem seu com esse nome```")
             return
         }
-        await savecharacter(name, basehp, initiative, initiativeadvantage, modalresponse.user.id)
+        initiativeadvantage = initiativeadvantage.toLowerCase() == 's'
+        const newchar = new PlayerCharacter({
+            name,
+            basehp,
+            hp: basehp,
+            initiative,
+            initiativeadvantage,
+            owner:modalresponse.user.id,
+        })
+        await newchar.save()
         modalresponse.editReply("```ini\n[Personagem criado: " + name + "]\n```")
     }
 }

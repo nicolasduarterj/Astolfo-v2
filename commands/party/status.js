@@ -3,7 +3,9 @@ const Party = require("../../models/party.js")
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("statusparty").setDescription("Mostra o status da sua party"),
+            .setName("statusparty")
+            .setDescription("Mostra o status da sua party"),
+
     async execute(interaction) {
         await interaction.reply("Processando...")
         const party = await Party.findOne({dm:interaction.user.id}).populate("members", {name:1, hp:1})

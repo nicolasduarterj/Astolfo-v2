@@ -21,20 +21,25 @@ module.exports = {
                 .setDescription("Senha para entrar na party")
                 .setRequired(true)
         ),
+
+    async autocomplete(interaction) {
+        const focusedValue = interaction.options.getFocused()
+        const playerchars = await PlayerCharacter.find({owner: interaction.user.id})
+        const filteredchars = playerchars.map(char => char.name).filter(char => char.startsWith(focusedValue))
+        await interaction.respond(filteredchars.map(char => ({name: char, value: char})))
+    },
     async execute(interaction) {
         await interaction.reply({content: "Processando...", ephemeral: true})
         const name = interaction.options.getString("char")
         const dm = interaction.options.getUser("dm")
         const pass = interaction.options.getString("senha")
-        const chararr = await PlayerCharacter.find({name, owner:interaction.user.id})
-        const char = chararr[0]
-        const partyarr = await Party.find({dm:dm.id})
-        const party = partyarr[0]
-        if (char == undefined) {
+        const char = await PlayerCharacter.findOne({name, owner:interaction.user.id})
+        const party = await Party.findOne({dm:dm.id})
+        if (char === null) {
             await interaction.editReply("```diff\n-Não consegui achar esse personagem.\n```")
             return
         }
-        if (party == undefined) {
+        if (party === null) {
             await interaction.editReply("```diff\n-Esse usuário não é mestre de uma party.\n```")
             return
         }
@@ -53,11 +58,5 @@ module.exports = {
         char.party = party._id
         await char.save()
         interaction.editReply("```ini\n[" + name + " foi adicionado à party!\n```")
-    },
-    async autocomplete(interaction) {
-        const focusedValue = interaction.options.getFocused()
-        const playerchars = await PlayerCharacter.find({owner: interaction.user.id})
-        const filteredchars = playerchars.map(char => char.name).filter(char => char.startsWith(focusedValue))
-        await interaction.respond(filteredchars.map(char => ({name: char, value: char})))
     }
 }

@@ -12,6 +12,7 @@ module.exports = {
                 .setRequired(true)
                 .setMinLength(3)
         ),
+
     async execute(interaction) {
         await interaction.reply({content: "Processando...", ephemeral: true})
         const found = await Party.exists({dm: interaction.user.id})

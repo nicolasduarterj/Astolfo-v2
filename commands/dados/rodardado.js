@@ -31,6 +31,7 @@ module.exports = {
                 .setRequired(true)
                 .setDescription("input do comando")
         ),
+
     async execute(interaction) {
         await interaction.reply("```\nRolando dados...\n```")
         const input = interaction.options.getString("dados")

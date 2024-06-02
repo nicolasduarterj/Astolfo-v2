@@ -2,7 +2,10 @@ const { SlashCommandBuilder } = require("discord.js")
 const PlayerCharacter = require("../../models/playercharacter.js")
 
 module.exports = {
-    data: new SlashCommandBuilder().setName("statuschars").setDescription("Mostra o status dos seus personagens"),
+    data: new SlashCommandBuilder()
+        .setName("statuschars")
+        .setDescription("Mostra o status dos seus personagens"),
+
     async execute(interaction) {
         await interaction.reply({content:"Processando...", ephemeral:true})
         const chars = await PlayerCharacter.find({owner:interaction.user.id})

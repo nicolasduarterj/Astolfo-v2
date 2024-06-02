@@ -3,7 +3,10 @@ const Party = require("../../models/party.js")
 const { SlashCommandBuilder } = require("discord.js")
 
 module.exports = {
-    data: new SlashCommandBuilder().setName("iniciativa").setDescription("Rola a iniciativa da sua party"),
+    data: new SlashCommandBuilder()
+        .setName("iniciativa")
+        .setDescription("Rola a iniciativa da sua party"),
+
     async execute(interaction) {
         await interaction.reply("Processando...")
         const party = await Party.findOne({dm:interaction.user.id})
