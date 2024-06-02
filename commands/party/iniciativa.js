@@ -18,7 +18,7 @@ module.exports = {
         let response = "```elm\nIniciativa:\n\n"
         for (const member of members) {
             let roll = Math.floor(Math.random() * 20) + 1
-            if (member.initiativeAdvantage == true) {
+            if (member.initiativeAdvantage) {
                 const die2 = Math.floor(Math.random() * 20) + 1
                 roll = roll > die2 ? roll : die2
             }
