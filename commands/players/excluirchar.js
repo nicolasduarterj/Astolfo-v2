@@ -29,8 +29,10 @@ module.exports = {
             return
         }
         if (char.party) {
+            console.log("está em uma party")
             const party = await Party.findById(char.party)
-            party.members = party.members.filter(id => id != char._id)
+            party.members = party.members.filter(id => id.toString() !== char._id.toString())
+            console.log(party.members)
             await party.save()
         }
         await PlayerCharacter.findOneAndDelete({name, owner:interaction.user.id})
