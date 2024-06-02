@@ -66,4 +66,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
     await command.autocomplete(interaction)
 })
 
+client.on('guildCreate', async (guild) => {
+    await guild.commands.set(client.commands.map(command => command.data))
+    console.log("comandos salvos")
+})
+
 client.login(process.env.TOKEN)
