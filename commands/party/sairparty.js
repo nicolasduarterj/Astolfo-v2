@@ -5,7 +5,7 @@ const Party = require("../../models/party");
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("sairparty")
+        .setName("sair")
         .setDescription("Sai de uma party")
         .addStringOption(option => 
             option
