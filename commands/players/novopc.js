@@ -4,7 +4,7 @@ const XRegExp = require("xregexp")
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName("novopersonagem")
+        .setName("novochar")
         .setDescription("Cria um novo personagem associado à sua conta"),
 
     async execute(interaction) {
