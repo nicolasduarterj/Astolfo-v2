@@ -38,8 +38,8 @@ module.exports = {
         await interaction.reply("Processando...")
         let name = interaction.options.getString("char")
         const dano = interaction.options.getNumber("pontos")
-        let char
         const playerchar = await PlayerCharacter.findOne({owner:interaction.user.id, name})
+        let char = playerchar
         const party = await Party.findOne({dm:interaction.user.id})
         if (party !== null) {
             const members = await Promise.all(party.members.map(id => PlayerCharacter.findById(id)))

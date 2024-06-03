@@ -38,19 +38,20 @@ module.exports = {
         await interaction.reply("Processando...")
         let name = interaction.options.getString("char")
         const dano = interaction.options.getNumber("pontos")
-        let char
         const playerchar = await PlayerCharacter.findOne({owner:interaction.user.id, name})
+        let char = playerchar
         const party = await Party.findOne({dm:interaction.user.id})
         if (party !== null) {
             const members = await Promise.all(party.members.map(id => PlayerCharacter.findById(id)))
             const partychar = members.find(char => (char.name == name)) 
             char = partychar === undefined ? playerchar : partychar
         }
+        
         if (char === null) {
             await interaction.editReply("```diff\n-Não consegui achar esse personagem\n```")
             return
         }
-        char.hp = (char.hp + dano) > char.basehp ? char.basehp : char.hp + dano
+        playerchar.hp = (char.hp + dano) > char.basehp ? char.basehp : char.hp + dano
         await char.save()
         await interaction.editReply("```elm\n" + name + " curou " + dano + " de vida\n```")
     }
