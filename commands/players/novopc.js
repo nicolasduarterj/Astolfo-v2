@@ -8,7 +8,6 @@ module.exports = {
         .setDescription("Cria um novo personagem associado à sua conta"),
 
     async execute(interaction) {
-
         //Mostra o menu
         const modal = new ModalBuilder().setCustomId(`pcmodal${interaction.user.id}`).setTitle("Novo personagem")
         const nameInput = new TextInputBuilder().setCustomId("name").setLabel("Nome do personagem").setStyle(TextInputStyle.Short)
@@ -34,7 +33,7 @@ module.exports = {
         const basehp = Number(modalresponse.fields.getTextInputValue("basehp"))
         const initiative = Number(modalresponse.fields.getTextInputValue("initiative"))
         let initiativeadvantage = modalresponse.fields.getTextInputValue("initiativeadvantage")
-        const nameregex = XRegExp("^[\\pL][\\pL -]*$", 'u')
+        const nameregex = XRegExp("^[\\pL\\pM][\\pL\\pM -]*$", 'u')
         if (XRegExp.exec(name, nameregex) === null || isNaN(basehp) || isNaN(initiative) || initiativeadvantage.match(/[sn]/i) === null
             || basehp < 1) {
             console.log("Não foi\n");
