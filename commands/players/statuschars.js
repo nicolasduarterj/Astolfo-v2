@@ -1,5 +1,16 @@
 const { SlashCommandBuilder } = require("discord.js")
 const PlayerCharacter = require("../../models/playercharacter.js")
+const Party = require("../../models/party.js")
+
+async function charandpartystatus(char) {
+    const charstatus = `${char.name}: ${char.hp}\n`
+    if (!char.party)
+        return charstatus
+    const party = await Party.findById(char.party).populate("members", {name: 1, hp: 1})
+    const partymemtext = party.members.filter(member => member.name !== char.name)
+        .map(member => `|- ${member.name}: ${member.hp} (Membro da party)\n`).join("")
+    return charstatus + partymemtext + "\n"
+}
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -13,11 +24,9 @@ module.exports = {
             await interaction.editReply("```diff\n-Você não tem nenhum personagem\n```")
             return
         }
-        let response = "```elm\n"
-        for (const char of chars) {
-            response += `${char.name}: ${char.hp}\n`
-        }
-        response += "```"
+        const chartransformpromisearray = chars.map(char => charandpartystatus(char))
+        const charstextarray = await Promise.all(chartransformpromisearray)
+        const response = "```elm\n" + charstextarray.join("") + "```"
         await interaction.editReply(response)
     }
 }
